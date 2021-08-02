@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -27,12 +28,15 @@ public class MainActivity extends AppCompatActivity {
 
     // widgets
     private ImageView mCelebrityImages;
+    private Button mCelebrityNameButton;
 
     // variables
     private ArrayList<String> arrayListURLs, arrayListNames;
-    private int randomCelebrity;
+    private int randomCelebrity = 0;
+    private int correctAnswerLocation = 0;
+    private String[] celebrityNamesArray = new String[4];
 
-    public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
+    public static class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 
         @Override
         protected Bitmap doInBackground(String... urls) {
@@ -47,8 +51,6 @@ public class MainActivity extends AppCompatActivity {
 
                 return BitmapFactory.decodeStream(inputStream);
 
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public class PageSourceTask extends AsyncTask<String, Void, String> {
+    public static class PageSourceTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {
@@ -104,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
         mCelebrityImages = findViewById(R.id.ivCelebrity);
 
+
         PageSourceTask pageSourceTask = new PageSourceTask();
         String result;
 
@@ -145,8 +148,28 @@ public class MainActivity extends AppCompatActivity {
 
             mCelebrityImages.setImageBitmap(imgCelebrity);
 
-            String celebrityName;
+            correctAnswerLocation = generateRandomInstances.nextInt(4);
+            int incorrectAnswerLocation;
 
+            for (int i = 0; i < 4; i++) {
+
+                if (correctAnswerLocation == i) {
+                    celebrityNamesArray[i] = arrayListNames.get(randomCelebrity);;
+
+                } else {
+
+                    incorrectAnswerLocation = generateRandomInstances
+                            .nextInt(arrayListURLs.size());
+                    while (incorrectAnswerLocation == randomCelebrity) {
+
+                        incorrectAnswerLocation = generateRandomInstances.nextInt(arrayListURLs.size());
+                    }
+
+                    celebrityNamesArray[i] = arrayListNames.get(incorrectAnswerLocation);
+                }
+
+
+            }
 
 
         } catch (ExecutionException | InterruptedException e) {

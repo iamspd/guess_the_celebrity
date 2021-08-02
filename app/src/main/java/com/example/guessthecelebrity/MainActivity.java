@@ -28,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
     // widgets
     private ImageView mCelebrityImages;
-    private Button mCelebrityNameButton;
+    private Button mCelebrityNameButton, mCelebrityNameButton1,
+            mCelebrityNameButton2, mCelebrityNameButton3;
 
     // variables
     private ArrayList<String> arrayListURLs, arrayListNames;
@@ -105,6 +106,10 @@ public class MainActivity extends AppCompatActivity {
         arrayListNames = new ArrayList<>();
 
         mCelebrityImages = findViewById(R.id.ivCelebrity);
+        mCelebrityNameButton = findViewById(R.id.btn);
+        mCelebrityNameButton1 = findViewById(R.id.btn1);
+        mCelebrityNameButton2 = findViewById(R.id.btn2);
+        mCelebrityNameButton3 = findViewById(R.id.btn3);
 
 
         PageSourceTask pageSourceTask = new PageSourceTask();
@@ -167,9 +172,12 @@ public class MainActivity extends AppCompatActivity {
 
                     celebrityNamesArray[i] = arrayListNames.get(incorrectAnswerLocation);
                 }
-
-
             }
+
+            mCelebrityNameButton.setText(celebrityNamesArray[0]);
+            mCelebrityNameButton1.setText(celebrityNamesArray[1]);
+            mCelebrityNameButton2.setText(celebrityNamesArray[2]);
+            mCelebrityNameButton3.setText(celebrityNamesArray[3]);
 
 
         } catch (ExecutionException | InterruptedException e) {

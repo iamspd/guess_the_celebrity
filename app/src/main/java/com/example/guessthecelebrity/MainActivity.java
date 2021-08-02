@@ -39,15 +39,93 @@ public class MainActivity extends AppCompatActivity {
     private int correctAnswerLocation = 0;
     private String[] celebrityNamesArray = new String[4];
 
+    public void createQuestion() {
+
+        PageSourceTask pageSourceTask = new PageSourceTask();
+        String result;
+
+        try {
+            result = pageSourceTask.execute("https://www.imdb.com/list/ls052283250/").get();
+
+            // <div class="aux-content-widget-2" id="feedback-widget">
+
+            String[] splitResult = result
+                    .split("<div class=\"aux-content-widget-2\" id=\"feedback-widget\">");
+
+            Pattern pattern = Pattern.compile("src=\"(.*?)\"");
+            Matcher matcher = pattern.matcher(splitResult[0]);
+            int counter = 0;
+
+            while (matcher.find()) {
+
+                counter++;
+
+                if (counter > 5) {
+                    arrayListURLs.add(matcher.group(1));
+                }
+            }
+
+            Pattern pattern1 = Pattern.compile("alt=\"(.*?)\"");
+            Matcher matcher1 = pattern1.matcher(splitResult[0]);
+
+            while (matcher1.find()) {
+                arrayListNames.add(matcher.group(1));
+            }
+
+            Random generateRandomInstances = new Random();
+            randomCelebrity = generateRandomInstances.nextInt(arrayListURLs.size());
+
+            Bitmap imgCelebrity;
+
+            ImageDownloaderTask imageDownloaderTask = new ImageDownloaderTask();
+            imgCelebrity = imageDownloaderTask.execute(arrayListURLs.get(randomCelebrity)).get();
+
+            mCelebrityImages.setImageBitmap(imgCelebrity);
+
+            correctAnswerLocation = generateRandomInstances.nextInt(4);
+            int incorrectAnswerLocation;
+
+            for (int i = 0; i < 4; i++) {
+
+                if (correctAnswerLocation == i) {
+                    celebrityNamesArray[i] = arrayListNames.get(randomCelebrity);
+                    ;
+
+                } else {
+
+                    incorrectAnswerLocation = generateRandomInstances
+                            .nextInt(arrayListURLs.size());
+                    while (incorrectAnswerLocation == randomCelebrity) {
+
+                        incorrectAnswerLocation = generateRandomInstances.nextInt(arrayListURLs.size());
+                    }
+
+                    celebrityNamesArray[i] = arrayListNames.get(incorrectAnswerLocation);
+                }
+            }
+
+            mCelebrityNameButton.setText(celebrityNamesArray[0]);
+            mCelebrityNameButton1.setText(celebrityNamesArray[1]);
+            mCelebrityNameButton2.setText(celebrityNamesArray[2]);
+            mCelebrityNameButton3.setText(celebrityNamesArray[3]);
+
+
+        } catch (ExecutionException | InterruptedException e) {
+
+            e.printStackTrace();
+        }
+    }
+
     public void onCelebrityNameClick(View view) {
 
         if (view.getTag().toString().equals(Integer.toString(correctAnswerLocation))) {
             Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Wrong! It was "
-                    + celebrityNamesArray[randomCelebrity], Toast.LENGTH_SHORT).show();
+                    + celebrityNamesArray[correctAnswerLocation], Toast.LENGTH_SHORT).show();
         }
 
+        createQuestion();
     }
 
     public static class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
@@ -124,78 +202,6 @@ public class MainActivity extends AppCompatActivity {
         mCelebrityNameButton2 = findViewById(R.id.btn2);
         mCelebrityNameButton3 = findViewById(R.id.btn3);
 
-
-        PageSourceTask pageSourceTask = new PageSourceTask();
-        String result;
-
-        try {
-            result = pageSourceTask.execute("https://www.imdb.com/list/ls052283250/").get();
-
-            // <div class="aux-content-widget-2" id="feedback-widget">
-
-            String[] splitResult = result
-                    .split("<div class=\"aux-content-widget-2\" id=\"feedback-widget\">");
-
-            Pattern pattern = Pattern.compile("src=\"(.*?)\"");
-            Matcher matcher = pattern.matcher(splitResult[0]);
-            int counter = 0;
-
-            while (matcher.find()) {
-
-                counter++;
-
-                if (counter > 5) {
-                    arrayListURLs.add(matcher.group(1));
-                }
-            }
-
-            Pattern pattern1 = Pattern.compile("alt=\"(.*?)\"");
-            Matcher matcher1 = pattern1.matcher(splitResult[0]);
-
-            while (matcher1.find()) {
-                arrayListNames.add(matcher.group(1));
-            }
-
-            Random generateRandomInstances = new Random();
-            randomCelebrity = generateRandomInstances.nextInt(arrayListURLs.size());
-
-            Bitmap imgCelebrity;
-
-            ImageDownloaderTask imageDownloaderTask = new ImageDownloaderTask();
-            imgCelebrity = imageDownloaderTask.execute(arrayListURLs.get(randomCelebrity)).get();
-
-            mCelebrityImages.setImageBitmap(imgCelebrity);
-
-            correctAnswerLocation = generateRandomInstances.nextInt(4);
-            int incorrectAnswerLocation;
-
-            for (int i = 0; i < 4; i++) {
-
-                if (correctAnswerLocation == i) {
-                    celebrityNamesArray[i] = arrayListNames.get(randomCelebrity);;
-
-                } else {
-
-                    incorrectAnswerLocation = generateRandomInstances
-                            .nextInt(arrayListURLs.size());
-                    while (incorrectAnswerLocation == randomCelebrity) {
-
-                        incorrectAnswerLocation = generateRandomInstances.nextInt(arrayListURLs.size());
-                    }
-
-                    celebrityNamesArray[i] = arrayListNames.get(incorrectAnswerLocation);
-                }
-            }
-
-            mCelebrityNameButton.setText(celebrityNamesArray[0]);
-            mCelebrityNameButton1.setText(celebrityNamesArray[1]);
-            mCelebrityNameButton2.setText(celebrityNamesArray[2]);
-            mCelebrityNameButton3.setText(celebrityNamesArray[3]);
-
-
-        } catch (ExecutionException | InterruptedException e) {
-
-            e.printStackTrace();
-        }
+        createQuestion();
     }
 }

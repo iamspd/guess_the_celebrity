@@ -8,8 +8,10 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +38,17 @@ public class MainActivity extends AppCompatActivity {
     private int randomCelebrity = 0;
     private int correctAnswerLocation = 0;
     private String[] celebrityNamesArray = new String[4];
+
+    public void onCelebrityNameClick(View view) {
+
+        if (view.getTag().toString().equals(Integer.toString(correctAnswerLocation))) {
+            Toast.makeText(this, "Correct!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Wrong! It was "
+                    + celebrityNamesArray[randomCelebrity], Toast.LENGTH_SHORT).show();
+        }
+
+    }
 
     public static class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 

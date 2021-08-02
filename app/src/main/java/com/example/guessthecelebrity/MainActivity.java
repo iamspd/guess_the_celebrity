@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
+
+    // widgets
+    private ImageView mCelebrityImages;
 
     // variables
     private ArrayList<String> arrayListURLs, arrayListNames;
@@ -98,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
         arrayListURLs = new ArrayList<>();
         arrayListNames = new ArrayList<>();
 
+        mCelebrityImages = findViewById(R.id.ivCelebrity);
+
         PageSourceTask pageSourceTask = new PageSourceTask();
         String result;
 
@@ -131,6 +137,17 @@ public class MainActivity extends AppCompatActivity {
 
             Random generateRandomInstances = new Random();
             randomCelebrity = generateRandomInstances.nextInt(arrayListURLs.size());
+
+            Bitmap imgCelebrity;
+
+            ImageDownloaderTask imageDownloaderTask = new ImageDownloaderTask();
+            imgCelebrity = imageDownloaderTask.execute(arrayListURLs.get(randomCelebrity)).get();
+
+            mCelebrityImages.setImageBitmap(imgCelebrity);
+
+            String celebrityName;
+
+
 
         } catch (ExecutionException | InterruptedException e) {
 

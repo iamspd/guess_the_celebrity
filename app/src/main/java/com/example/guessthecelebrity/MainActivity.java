@@ -3,6 +3,8 @@ package com.example.guessthecelebrity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.loader.content.AsyncTaskLoader;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +27,31 @@ public class MainActivity extends AppCompatActivity {
     // variables
     private ArrayList<String> arrayListURLs, arrayListNames;
     private int randomCelebrity;
+
+    public class ImageDownloaderTask extends AsyncTask<String, Void, Bitmap> {
+
+        @Override
+        protected Bitmap doInBackground(String... urls) {
+
+            try {
+
+                URL url = new URL(urls[0]);
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.connect();
+
+                InputStream inputStream = httpURLConnection.getInputStream();
+
+                return BitmapFactory.decodeStream(inputStream);
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+    }
 
     public class PageSourceTask extends AsyncTask<String, Void, String> {
 
